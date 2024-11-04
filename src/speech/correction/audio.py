@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import sys
 import ffmpeg
 import pandas as pd
 
@@ -25,11 +25,13 @@ def convert_audio_files(path, isFolder) -> list:
 # .wav로 변환하는 함수
 def convert_file(filepath: Path) -> Path:
     new_filepath = filepath.with_suffix('.wav')
+
+    ffmpeg_cmd = 'C:/ffmpeg/bin/ffmpeg.exe' if sys.platform == 'win32' else 'ffmpeg'
     (
         ffmpeg
         .input(str(filepath))
         .output(str(new_filepath), ar=16000, ac=1)  # 16000Hz로 샘플레이트 설정
-        .run(cmd='C:/ffmpeg/bin/ffmpeg.exe', quiet=True, overwrite_output=True)
+        .run(cmd=ffmpeg_cmd, quiet=True, overwrite_output=True)
     )
     print(f"변환 완료: {new_filepath}")
     return new_filepath

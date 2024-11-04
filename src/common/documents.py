@@ -6,7 +6,7 @@ import random
 import pandas as pd
 
 from common.info import open_dialog
-
+from speech.correction.util import remove_duplication
 
 def merge_json(filename: str):
     file_amount = int(input("합치려는 파일 수: "))
@@ -34,7 +34,7 @@ def merge_excel_files(sort=True) -> Path:
     
     # 파일 선택 및 추가
     while True:
-        filepath = open_dialog(False)
+        filepath = open_dialog(False, filetypes=[("Excel Files", "*.xlsx")])
         if filepath.suffix != '.xlsx':
             break
         fileList.append(filepath)
@@ -107,6 +107,6 @@ def sep_json_files(train_data_ratio=0.7):
     print("json파일 분리 완료")
 
 if __name__ == '__main__':
-    sep_json_files(train_data_ratio=0.7)
-    # fp = merge_excel_files(True)
-    # remove_duplication(fp)
+    # sep_json_files(train_data_ratio=0.7)
+    fp = merge_excel_files(True)
+    remove_duplication(fp)

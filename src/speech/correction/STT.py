@@ -98,7 +98,7 @@ def STT_pipeline(askFolder=None, model='google', makeTrainData=None, evaluation=
         makeTrainData = input("학습 데이터를 만들까요?(Y/N): ").strip().lower() == 'y'
     if makeTrainData and len(fileList) != 0:
         jsonl = input("jsonl데이터로 만들까요?(Y/N): ").strip().lower() == 'y'
-        excelPath = open_dialog(False)
+        excelPath = open_dialog(isfolder=False, filetypes=[("Excel Files", "*.xlsx")])
         outputPath = convert_text_data(fileList, convert_result, jsonl, excelPath, suffix)
     else:
         outputPath = convert_text_data(fileList, convert_result, True, suffix)

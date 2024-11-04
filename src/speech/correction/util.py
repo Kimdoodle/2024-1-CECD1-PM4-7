@@ -10,7 +10,7 @@ from common.info import open_dialog
 # 중복된 데이터 제거
 def remove_duplication(filePath=None) -> Path:
     if filePath is None:
-        filePath = open_dialog(False)
+        filePath = open_dialog(isfolder=False, filetypes=[("Excel Files", "*.xlsx"), ("CSV Files", "*.csv")])
     try:
         filetype = "csv"
         df = pd.read_csv(filePath, encoding='utf-8')
