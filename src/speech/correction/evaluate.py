@@ -1,7 +1,7 @@
 import pandas as pd
 import sys
 from common import info
-from playground.client import send_request_with_history
+from playground.client import send_request_without_history
 from speech.correction.calculate import calculate_ser, calculate_cos, load_models
 from pathlib import Path
 from openai import OpenAI
@@ -70,32 +70,41 @@ def evaluate_SER(filePath=None) -> Path:
     print("SER 계산완료.")
     return newFilePath
 
-# 데이터 교정가능여부 확인(모델호출)
-def able_to_correct():
-    PROMPT = "제시된 문장은 STT과정에서 오류가 발생한 문장이다. 기존 문장으로 수정하라.\
-                답변은 수정한 문장만을 출력하고, 문장 부호는 생략한다."
+# 데이터 평가/교정가능여부 확인
+def able_to_correct(question: str):
+    PROMPT1 = info.getPrompt('stt_validation_241021')
+    PROMPT2 = info.getPrompt('stt_correction_241015')
+    p1 = PROMPT1.replace("질문: {}, 답변: {}\n", "")
+    p2 = PROMPT2.replace("질문: {}, 답변: {}\n", "") + "교정 결과만 출력하라."
+
     KEY = getKey('OPENAI')
     client = OpenAI(api_key=KEY)
-    filePath = info.open_dialog(False)
+    model1 = 'gpt-4o'
+    model2 = info.getModelName('stt_correction')
+    filePath = info.open_dialog(False, filetypes=[("Excel Files", "*.xlsx")])
     df = pd.read_excel(filePath)
 
+    validated = []
     corrected = []
     corrected_ser = []
     for index, row in df.iterrows():
         orig = row["User content"]
         stt = row["STT Result"]
-        conversation_history = [
-            {
-                "role": "system",
-                "content": PROMPT
-            }
-        ]
-        response = send_request_with_history(client, conversation_history, stt)
-        print(f"{index+1}: {orig}\t{response}")
-        ser = calculate_ser(orig, response)
-        corrected.append(response)
-        corrected_ser.append(ser)
+        user_input = f"질문: '{question}', 답변: '{stt}'"
+        response1 = send_request_without_history(client, p1, user_input, model1)
+        if response1 == '불충분':
+            response2 = send_request_without_history(client, p2, user_input, model1)
+            response2 = response2.replace("'", "")
+            print(f"{index + 1}: {orig}\t{response2}")
+            ser = calculate_ser(orig, response2)
+            corrected_ser.append(ser)
+            corrected.append(response2)
+        else:
+            corrected.append("")
+            corrected_ser.append(0)
+        validated.append(response1)
 
+    df["Validated"] = validated
     df["Corrected"] = corrected
     df["Corrected_SER"] = corrected_ser
 
@@ -148,6 +157,6 @@ def evaluate_score(filePath: Path, ser:True, cos:False):
 
 
 if __name__ == '__main__':
-    fp = info.open_dialog(False, filetypes=[("Excel Files", "*.xlsx")])
-    evaluate_score(fp, ser=True, cos=True)
-    # able_to_correct()
+    # fp = info.open_dialog(False, filetypes=[("Excel Files", "*.xlsx")])
+    # evaluate_score(fp, ser=True, cos=True)
+    able_to_correct("구체적으로 어떤 주거 문제가 있으신가요?")
