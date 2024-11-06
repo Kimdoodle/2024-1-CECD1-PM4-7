@@ -128,20 +128,34 @@
   border-radius: 15px;
   max-width: 80%; /* 최대 너비를 80%로 설정 */
   text-align: left;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
 }
 
 .pass-message {
   background-color: #83e088;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
+  min-width: 140px; /* 최소 너비 설정 */
 }
 
 .insufficient-message {
   background-color: #FF9800;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
+  min-width: 150px; /* 최소 너비 설정 */
 }
 
 .full-damage-message {
   background-color: #F44336;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
+  min-width: 160px; /* 최소 너비 설정 */
 }
-
 
 .gpt-message-container {
   display: flex;
@@ -174,17 +188,26 @@
   border-radius: 15px;
   max-width: 60%;
   text-align: left;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
 }
 
 .transcription-message {
   background-color: #4faaff;
   color: white;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
 }
 
 .chat-summary-message {
   background-color: #fffacd;
   color: #cd853f;
   font-weight: 580;
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  overflow-wrap: normal; /* 단어 단위 줄바꿈 방지 */
+  word-break: keep-all; /* 단어 전체가 말풍선을 넘어갈 때 줄바꿈 */
 }
 
 .dropdown-container {
