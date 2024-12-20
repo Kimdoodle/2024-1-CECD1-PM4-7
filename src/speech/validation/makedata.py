@@ -260,10 +260,106 @@ def mixToNewData():
         for item in json_list:
             f.write(item + '\n')
 
+# 5
+def makeData_valid_New():
+    prompt = getPrompt("stt_validation_241221")
+    file1 = open_dialog(False) # New data file
+    file2 = open_dialog(False) # Existing passed data file
+    df = pd.read_excel(file1)
+    df2 = pd.read_excel(file2)
+
+    userInput_train = []
+    Assistant_train = []
+    df3 = pd.DataFrame(columns=["Question", "Answer", "Assistant"])
+
+    for _, item in df.iterrows():
+        if random.random() <= 0.7:
+            userInput_train.append(f"질문: {item['Question']}, 답변: {item['STT Result']}")
+            Assistant_train.append(item["Assistant"])
+        else:
+            df3 = pd.concat([df3, pd.DataFrame({
+                "Question": [item['Question']],
+                "Answer": [item['STT Result']],
+                "Assistant": [item['Assistant']]
+            })], ignore_index=True)
+
+    for _, item in df2.iterrows():
+        if random.random() <= 0.7:
+            userInput_train.append(f"질문: {item['Question']}, 답변: {item['Answer']}")
+            Assistant_train.append(item["Assistant"])
+        else:
+            df3 = pd.concat([df3, pd.DataFrame({
+                "Question": [item['Question']],
+                "Answer": [item['Answer']],
+                "Assistant": [item['Assistant']]
+            })], ignore_index=True)
+
+    json_list = []
+    for ui, a in zip(userInput_train, Assistant_train):
+        message = {
+            "messages": [
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": ui},
+                {"role": "assistant", "content": a}
+            ]
+        }
+        json_list.append(json.dumps(message, ensure_ascii=False))
+
+    # Save the JSONL file
+    random.shuffle(json_list)
+    output_path = 'VALIDATION_TRAIN_FINAL.jsonl'
+    with open(output_path, 'w', encoding='utf-8') as f:
+        for item in json_list:
+            f.write(item + '\n')
+
+    # Save the Excel file
+    excel_output_path = 'VALIDATION_TEST_FINAL.xlsx'
+    df3.to_excel(excel_output_path, index=False, encoding='utf-8')
+
+def makeData_corr_New():
+    prompt = getPrompt("stt_correction_241221")
+    file1 = open_dialog(False)
+    df = pd.read_excel(file1)
+
+    json_list = []
+    df_test = pd.DataFrame(columns=["Question", "STT Result", "Answer"])
+
+    for _, i in df.iterrows():
+        if random.random() <= 0.7:
+            user_input = f"질문: {i['Question']}, 답변: {i['STT Result']}"
+            assistant = i['Answer']
+            message = {
+                "messages": [
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": user_input},
+                    {"role": "assistant", "content": assistant}
+                ]
+            }
+            json_list.append(json.dumps(message, ensure_ascii=False))
+        else:
+            df_test = pd.concat([df_test, pd.DataFrame({
+                "Question": [i['Question']],
+                "Answer": [i['STT Result']],
+                "Assistant": [i['Answer']]
+            })], ignore_index=True)
+
+    # Save JSONL file for 70%
+    output_path = 'CORRECTION_FINAL.jsonl'
+    random.shuffle(json_list)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        for item in json_list:
+            f.write(item + '\n')
+
+    # Save Excel file for 30%
+    excel_output_path = 'CORRECTION_TEST_FINAL.xlsx'
+    df_test.to_excel(excel_output_path, index=False, encoding='utf-8')
+
 
 if __name__ == '__main__':
     # makeData_byCorrectionModel()
     # makeTrainData_byCorrectionModel()
     # makeData_byChatModel()
     # expandData_byChatModel(200)
-    mixToNewData()
+    # mixToNewData()
+    # makeData_valid_New()
+    makeData_corr_New()

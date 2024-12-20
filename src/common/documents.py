@@ -109,4 +109,4 @@ def sep_json_files(train_data_ratio=0.7):
 if __name__ == '__main__':
     # sep_json_files(train_data_ratio=0.7)
     fp = merge_excel_files(True)
-    remove_duplication(fp)
+    # remove_duplication(fp)
